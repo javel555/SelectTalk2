@@ -8,6 +8,10 @@
       content="width=device-width, initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"
     />
     <title>恋愛シミュレーションゲーム</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=M+PLUS+1p"
+      rel="stylesheet"
+    />
     <style>
       html {
         height: 100%;
@@ -30,16 +34,19 @@
         background-repeat: no-repeat;
         margin: auto;
         padding: 0;
-        font-family: "メイリオ", sans-serif;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         overflow: hidden;
         height: 100%;
+
+        /* Webフォント */
+        font-family: "M PLUS 1p", "メイリオ", sans-serif;
+        font-weight: bold;
       }
 
       #character-container {
-        background-image: url("character.png");
+        background-image: url("ch-2.png");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -49,14 +56,14 @@
 
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
+        justify-content: flex-start;
       }
 
-      #text {
-        background: rgba(0, 0, 0, 0.5);
-        border: 2px solid rgba(0, 0, 0, 0.25);
-        border-radius: 5px;
-        color: #eee;
+      #text-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        /* align-items: center; */
 
         position: absolute;
         max-width: calc(480px - 40px);
@@ -64,11 +71,39 @@
         right: 0;
         bottom: 0;
         /* width: calc(100% - 40px); */
+        min-height: 20vh;
         margin: 0 auto;
         margin-bottom: 10px;
+
+        background: rgba(0, 0, 0, 0.5);
+        border: 2px solid rgba(0, 0, 0, 0.25);
+        border-radius: 5px;
+        color: #eee;
+      }
+
+      #text {
         padding: 10px;
+        font-size: 18px;
         text-align: left;
         flex-grow: 0;
+        margin: 0;
+      }
+
+      @keyframes blink {
+        75% {
+          opacity: 0;
+        }
+      }
+
+      #next {
+        font-size: 16px;
+        font-weight: bold;
+        color: #eee;
+        background: none;
+        border: none;
+        align-self: flex-end;
+        /* 点滅する */
+        animation: blink 1s step-end infinite;
       }
 
       #choices {
@@ -85,7 +120,7 @@
       .choice-button {
         background: rgba(255, 255, 255, 0.8);
         border: 2px solid rgba(0, 0, 0, 0.25);
-        border-radius: 50px;
+        border-radius: 15px;
         color: #333;
         padding: 10px 20px;
         font-size: 16px;
@@ -96,15 +131,14 @@
         background: rgba(255, 255, 255, 0.9);
       }
 
-      #affinity {
-        background-color: rgba(255, 192, 203, 0.5);
+      #system {
+        background-color: rgba(255, 192, 203, 0.8);
         border: 2px solid rgba(0, 0, 0, 0.25);
         border-radius: 5px;
         color: #eee;
         padding: 5px;
 
-        font-size: larger;
-        font-weight: bold;
+        font-size: 24px;
         color: #fee;
         /* 影を付ける */
         text-shadow: 1px 1px 1px #f44;
@@ -112,32 +146,42 @@
         display: flex;
         justify-content: space-around;
       }
-
     </style>
   </head>
   <body>
     <div id="container">
+      <div id="menu">
+        <button id="reset">リセットボタン</button>
+      </div>
       <div id="game-container">
-        <div id="character-container">
-          
-          <div id="affinity">
-            <div>好感度: 0%</div>
-            <div>残り回数: 0回</div>
+          <div id="system">
+            <div>好感度: <span id="affinity">0</span>%</div>
+            <div>残り回数: <span id="last">0</span>回</div>
           </div>
-
+        <div id="character-container">
           <div id="choices">
-            <button class="choice-button">
+            <button id="response" class="choice-button">
               選択肢1テキストが表示されますテキストが表示されますテキストが表示されます
             </button>
-            <button class="choice-button">
-              選択肢2テキストが表示されますテキストが表示されますテキストが表示されます
+            <button
+              id="rerole"
+              class="choice-button"
+              style="background-color: rgba(255, 255, 255, 0.5)"
+            >
+              考え直す
             </button>
           </div>
-          <p id="text">
-            テキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されます
-          </p>
+          <div id="text-container">
+            <p id="text">
+              テキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されますテキストが表示されます
+            </p>
+            <button id="next">▼</button>
+          </div>
         </div>
       </div>
     </div>
+    <script type="module" src="chatgpt.js"></script>
+    <script type="module" src="character.js"></script>
+    <script type="module" src="game.js"></script>
   </body>
 </html>
