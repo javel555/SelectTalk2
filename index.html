@@ -139,26 +139,131 @@
         padding: 5px;
 
         font-size: 24px;
-        color: #fee;
+        color: #fff;
         /* 影を付ける */
         text-shadow: 1px 1px 1px #f44;
 
         display: flex;
         justify-content: space-around;
       }
+
+      #title {
+        background-color: rgba(255, 192, 203, 0.8);
+        border: 2px solid rgba(0, 0, 0, 0.25);
+        border-radius: 5px;
+        color: #eee;
+        padding: 5px;
+
+        font-size: 24px;
+        color: #fff;
+        /* 影を付ける */
+        text-shadow: 1px 1px 1px #e44;
+        text-align: center;
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+
+      #clear {
+        /* background-color: rgba(255, 192, 203, 0.8);
+        border: 2px solid rgba(0, 0, 0, 0.25);
+        border-radius: 5px; */
+        color: #eee;
+        padding: 5px;
+
+        font-size: 24px;
+        color: #fff;
+        /* 影を付ける */
+        text-shadow: 1px 1px 1px #e44;
+        text-align: center;
+
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+
+        /* 中央揃え */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      #clear h1 {
+        background-color: rgba(255, 192, 203, 0.8);
+        border: 2px solid rgba(0, 0, 0, 0.25);
+        border-radius: 5px;
+        padding: 5px;
+      }
+
+      #gameover {
+        /* background-color: rgba(255, 192, 203, 0.8);
+        border: 2px solid rgba(0, 0, 0, 0.25);
+        border-radius: 5px; */
+        color: #eee;
+        padding: 5px;
+
+        font-size: 24px;
+        color: #fff;
+        /* 影を付ける */
+        /* text-shadow: 1px 1px 1px #e44; */
+        text-align: center;
+
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+
+        /* 中央揃え */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      #gameover h1 {
+        background-color: rgba(0, 0, 0, 0.5);
+        border: 2px solid rgba(0, 0, 0, 0.25);
+        border-radius: 5px;
+        padding: 5px 10px;
+      }
+
+
+
     </style>
   </head>
   <body>
     <div id="container">
-      <div id="menu">
+      <!-- <div id="menu">
         <button id="reset">リセットボタン</button>
-      </div>
+      </div> -->
       <div id="game-container">
-          <div id="system">
-            <div>好感度: <span id="affinity">0</span>%</div>
-            <div>残り回数: <span id="last">0</span>回</div>
-          </div>
+        <div id="system">
+          <div>好感度: <span id="affinity">0</span>%</div>
+          <div>残り回数: <span id="last">0</span>回</div>
+        </div>
         <div id="character-container">
+          <div id="title">
+            <h1>AI恋愛シミュレーションゲーム</h1>
+            残り回数以内に好感度が100%になるとクリアです。<br />
+            好感度が上がりそうな台詞が出るまで考え直しを続けましょう<br />
+            <br />
+            <button id="start" class="choice-button" >スタート</button>
+          </div>
+          <div id="clear">
+            <h1>クリア！</h1>
+            <button class="choice-button js-restart">もう一度</button>
+          </div>
+          <div id="gameover">
+            <h1>ゲームオーバー</h1>
+            <button class="choice-button js-restart">もう一度</button>
+          </div>
           <div id="choices">
             <button id="response" class="choice-button">
               選択肢1テキストが表示されますテキストが表示されますテキストが表示されます

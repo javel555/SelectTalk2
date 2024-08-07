@@ -6,30 +6,6 @@ import { chatGPTMessage } from "./chatgpt.js";
 import { character } from "./character.js";
 import { player } from "./player.js";
 
-// DOM: character-ccontainer
-const characterContainer = document.getElementById("character-container");
-
-// DOM: affinity
-const affinity = document.getElementById("affinity");
-
-// DOM: last
-const last = document.getElementById("last");
-
-// DOM: choices
-const choices = document.getElementById("choices");
-
-// DOM: relore
-const relore = document.getElementById("relore");
-
-// DOM: response
-const response = document.getElementById("response");
-
-// DOM: text
-const text = document.getElementById("text");
-
-// DOM: next
-const next = document.getElementById("next");
-
 const Util = {
   // ランダムな整数を生成する
   randomInt: (min, max) => {
@@ -65,14 +41,18 @@ class Game {
   // コンストラクタ
   constructor() {
     this.doms = {
-      characterContainer,
-      affinity,
-      choices,
-      last,
-      relore,
-      response,
-      text,
-      next,
+      characterContainer: document.getElementById("character-container"),
+      affinity: document.getElementById("affinity"),
+      choices: document.getElementById("choices"),
+      last: document.getElementById("last"),
+      rerole: document.getElementById("rerole"),
+      response: document.getElementById("response"),
+      text: document.getElementById("text"),
+      next: document.getElementById("next"),
+      start: document.getElementById("start"),
+      clear: document.getElementById("clear"),
+      gameover: document.getElementById("gameover"),
+      restartButtons: document.querySelectorAll(".js-restart"),
     };
 
     this.state = {
@@ -83,45 +63,78 @@ class Game {
       point: 0,
       affinity: 0,
       last: 10,
-      thread: [{ ...chatGPTMessage, role: "user", content: "こんにちは" }],
+      thread: [],
+      hasToken: false,
     };
 
     this.doms.text.style.display = "none";
     this.doms.choices.style.display = "none";
+    // this.doms.start.parentElement.style.display = "none";
+    this.doms.clear.style.display = "none";
+    this.doms.gameover.style.display = "none";
+
+    // トークン有無の確認
+    if (!API_KEY) {
+      this.doms.text.style.display = "flex";
+      this.doms.text.textContent =
+        "APIキーが指定されていません。t=APIキー を指定してください";
+      return;
+    }
 
     // 初回動作
     this.setEvent();
-    this.talk();
   }
 
   // 画面の各ボタンにイベントを割り当てる
   setEvent() {
-    this.doms.choices.addEventListener("click", async (e) => {
-      if (e.target.dataset.response) {
-        this.decreaseLast();
-        this.update();
+    this.doms.response.addEventListener("click", async (e) => {
+      // 選択肢がクリックされた場合
+      this.decreaseLast();
+      this.update();
 
-        const response = e.target.dataset.response;
-        // ユーザの選択肢をスレッドに追加
-        this.state.thread.push({
-          ...chatGPTMessage,
-          role: "user",
-          content: response,
-        });
+      const response = e.target.dataset.response;
+      // ユーザの選択肢をスレッドに追加
+      this.state.thread.push({
+        ...chatGPTMessage,
+        role: "user",
+        content: response,
+      });
 
-        this.talk();
+      this.talk();
 
-        // 現在選択中の回答点を好感度に加算
-        this.addAffinity(this.state.point * 2);
-      } else {
-        this.think();
-      }
+      // 現在選択中の回答点を好感度に加算
+      this.addAffinity(this.state.point * 2);
+    });
+
+    this.doms.rerole.addEventListener("click", async (e) => {
+      // 考え直す
+      this.think();
     });
 
     this.doms.text.addEventListener("click", async (e) => {
+      // テキストがクリックされた場合
       if (this.state.hasNext) {
         this.talk();
       }
+    });
+
+    const start = async (e) => {
+      this.doms.start.style.display = "none";
+      this.doms.start.parentElement.style.display = "none";
+      this.doms.clear.style.display = "none";
+      this.doms.gameover.style.display = "none";
+      this.state.point = 0;
+      this.state.affinity = 0;
+      this.state.last = 10;
+      this.state.thread = [
+        { ...chatGPTMessage, role: "user", content: "こんにちは" },
+      ];
+      this.update();
+      this.talk();
+    };
+    this.doms.start.addEventListener("click", start);
+    this.doms.restartButtons.forEach((button) => {
+      button.addEventListener("click", start);
     });
   }
 
@@ -140,20 +153,17 @@ class Game {
 
     // 好感度が３３以下なら、キャラクターの画像を変更
     if (this.state.affinity <= 33) {
-      this.doms.characterContainer.style.backgroundImage =
-        "url(./ch-2.png)";
+      this.doms.characterContainer.style.backgroundImage = "url(./ch-2.png)";
     } else if (this.state.affinity <= 66) {
-      this.doms.characterContainer.style.backgroundImage =
-        "url(./ch-1.png)";
+      this.doms.characterContainer.style.backgroundImage = "url(./ch-1.png)";
     } else {
-      this.doms.characterContainer.style.backgroundImage =
-        "url(./ch-3.png)";
+      this.doms.characterContainer.style.backgroundImage = "url(./ch-3.png)";
     }
   }
   // 好感度を加算
   addAffinity(point) {
     this.state.affinity += point;
-    if(this.state.affinity >= 100){
+    if (this.state.affinity >= 100) {
       this.state.affinity = 100;
     }
     console.log("affinity: ", this.state.affinity);
@@ -185,11 +195,22 @@ class Game {
 
     this.update();
 
+    if (this.state.affinity >= 100) {
+      // ゲームクリア
+      this.doms.clear.style.display = "flex";
+      this.doms.choices.style.display = "none";
+      return;
+    }
+
+    if (this.state.last <= 0) {
+      // ゲームオーバー
+      this.doms.gameover.style.display = "flex";
+      this.doms.choices.style.display = "none";
+      return;
+    }
+
     if (finished) {
       this.think();
-    } else {
-      // await Util.sleep(1000);
-      // await this.talk();
     }
   }
 
