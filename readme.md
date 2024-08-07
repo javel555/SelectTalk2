@@ -1,0 +1,1 @@
+https://scrapbox.io/javememo/chatgpt%E3%81%A7ADV2

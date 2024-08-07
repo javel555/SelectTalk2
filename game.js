@@ -75,9 +75,10 @@ class Game {
 
     // トークン有無の確認
     if (!API_KEY) {
-      this.doms.text.style.display = "flex";
-      this.doms.text.textContent =
-        "APIキーが指定されていません。t=APIキー を指定してください";
+      // this.doms.text.style.display = "flex";
+      // this.doms.text.textContent =
+      //   "APIキーが指定されていません。t=APIキー を指定してください";
+      this.doms.start.textContent = "APIキーが指定されていません。t=APIキー を指定してください";
       return;
     }
 
